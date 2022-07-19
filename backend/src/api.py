@@ -29,14 +29,14 @@ db_drop_and_create_all()
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks' , methods=['GET'])
-def get_drinks():
+def retrieve_drinks():
     drinks = Drink.query.all()
     drinks_short = [drink.short() for drink in drinks]
+
     return jsonify({
         'success': True,
         'drinks': drinks_short
     }), 200
-
 
 
 '''
@@ -49,7 +49,7 @@ def get_drinks():
 '''
 @app.route('/drinks-detail' , methods=['GET'])
 @requires_auth('get:drinks-detail')
-def get_drinks_detail(payload):
+def retrieve_drinks_detail(payload):
     drinks = Drink.query.all()
     drinks_long = [drink.long() for drink in drinks]
     return jsonify({
@@ -80,7 +80,7 @@ def create_drink(payload):
             'drinks': drink.long()
         })
     except Exception as e:
-        abort(500, {'error': e})
+        abort(422, {'error': e})
 
 
 '''
@@ -112,9 +112,9 @@ def update_drink(payload, id):
         return jsonify({
             'success': True,
             'drinks': drink.long()
-        })
+        }), 200
     except Exception as e:
-        abort(500, {'error': e})
+        abort(422, {'error': e})
 
 
 '''
@@ -138,9 +138,9 @@ def delete_drink(payload, id):
         return jsonify({
             'success': True,
             'delete': id
-        })
+        }), 200
     except Exception as e:
-        abort(500, {'error': e})
+        abort(422, {'error': e})
 
 
 # Error Handling
@@ -156,6 +156,32 @@ def unprocessable(error):
         "error": 422,
         "message": "unprocessable"
     }), 422
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": 404,
+        "message": "resource not found"
+    }), 404
+
+@app.errorhandler(400)
+def bad_request(error):
+    return jsonify({
+        "success": False,
+        "error": 400,
+        "message": "bad request"
+    }), 400
+
+@app.errorhandler(401)
+def unauthorized(error):
+    return jsonify({
+        "success": False,
+        "error": 401,
+        "message": "unauthorized"
+    }), 401
+
+
 
 
 '''
