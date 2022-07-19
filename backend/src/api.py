@@ -29,7 +29,7 @@ db_drop_and_create_all()
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks' , methods=['GET'])
-def retrieve_drinks():
+def get_drinks():
     drinks = Drink.query.all()
     drinks_short = [drink.short() for drink in drinks]
 
@@ -49,7 +49,7 @@ def retrieve_drinks():
 '''
 @app.route('/drinks-detail' , methods=['GET'])
 @requires_auth('get:drinks-detail')
-def retrieve_drinks_detail(payload):
+def get_drinks_detail(payload):
     drinks = Drink.query.all()
     drinks_long = [drink.long() for drink in drinks]
     return jsonify({
