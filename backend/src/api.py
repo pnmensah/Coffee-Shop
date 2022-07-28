@@ -111,7 +111,7 @@ def update_drink(payload, id):
         drink.update()
         return jsonify({
             'success': True,
-            'drinks': drink.long()
+            'drinks': [drink.long()]
         }), 200
     except Exception as e:
         abort(422, {'error': e})
@@ -128,7 +128,7 @@ def update_drink(payload, id):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
-@requires_auth('delete:drinks')
+@requires_auth('del:drinks')
 def delete_drink(payload, id):
     try:
         drink = Drink.query.get(id)
